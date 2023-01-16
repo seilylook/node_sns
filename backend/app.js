@@ -6,6 +6,7 @@ const session = require('express-session');
 const nunjucks = require('nunjucks');
 const dotenv = require('dotenv');
 const passport = require('passport');
+const cors = require('cors');
 
 dotenv.config();
 const pageRouter = require('./routes/page');
@@ -51,6 +52,7 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cors());
 
 app.use('/', pageRouter);
 app.use('/auth', authRouter);
