@@ -20,7 +20,7 @@ exports.join = async (req, res, next) => {
     console.error(error);
     return next(error);
   }
-}
+};
 
 exports.login = (req, res, next) => {
   passport.authenticate('local', (authError, user, info) => {
