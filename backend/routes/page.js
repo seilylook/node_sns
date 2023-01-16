@@ -1,27 +1,25 @@
 const express = require('express');
-const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
+const { isLoggedIn, isNotLoggedIn } = require('../middlewares');
+const {
+  renderProfile, renderJoin, renderMain, renderHashtag,
+} = require('../controllers/page');
 
 const router = express.Router();
 
-router.get('/profile', isLoggedIn, (req, res) => {
-  res.render('profile', { title: '내 정보 - NodeBird', user: req.user });
+router.use((req, res, next) => {
+  res.locals.user = req.user;
+  res.locals.followerCount = req.user?.Followers?.length || 0;
+  res.locals.followingCount = req.user?.Followings?.length || 0;
+  res.locals.followingIdList = req.user?.Followings?.map(f => f.id) || [];
+  next();
 });
 
-router.get('/join', isNotLoggedIn, (req, res) => {
-  res.render('join', {
-    title: '회원가입 - NodeBird',
-    user: req.user,
-    joinError: req.flash('joinError'),
-  });
-});
+router.get('/profile', isLoggedIn, renderProfile);
 
-router.get('/', (req, res, next) => {
-  res.render('main', {
-    title: 'NodeBird',
-    twits: [],
-    user: req.user,
-    loginError: req.flash('loginError'),
-  });
-});
+router.get('/join', isNotLoggedIn, renderJoin);
+
+router.get('/', renderMain);
+
+router.get('/hashtag', renderHashtag);
 
 module.exports = router;
